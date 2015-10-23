@@ -1,0 +1,6 @@
+framework module Pods_CardScollView_Tests {
+  umbrella header "Pods-CardScollView_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

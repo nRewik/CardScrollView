@@ -1,0 +1,6 @@
+framework module CardScollView {
+  umbrella header "CardScollView-umbrella.h"
+
+  export *
+  module * { export * }
+}

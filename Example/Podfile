@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'CardScollView_Example', :exclusive => true do
+  pod "CardScollView", :path => "../"
+end
+
+target 'CardScollView_Tests', :exclusive => true do
+  pod "CardScollView", :path => "../"
+
+  
+end

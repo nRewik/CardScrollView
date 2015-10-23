@@ -1,0 +1,14 @@
+PODS:
+  - CardScollView (0.1.0)
+
+DEPENDENCIES:
+  - CardScollView (from `../`)
+
+EXTERNAL SOURCES:
+  CardScollView:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  CardScollView: ee5e7f4f73740f9140e0ddd01b7aceea60332b45
+
+COCOAPODS: 0.39.0

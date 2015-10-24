@@ -24,6 +24,25 @@ class ViewController: UIViewController {
             self.cardScrollView.selectionMode = !self.cardScrollView.selectionMode
         }
     }
+    
+    var count = 0
+    @IBAction func addItemButtonTapped(sender: AnyObject) {
+        
+        let colors = [UIColor.redColor(),UIColor.brownColor(),UIColor.yellowColor()]
+        UIView.animateWithDuration(0.3){
+            let newCard = self.cardScrollView.addCardAtIndex(self.cardScrollView.selectedIndex)
+            newCard.backgroundColor = colors[ (self.count++) % colors.count ]
+        }
+
+    }
+    
+    @IBAction func removeButtonTapped(sender: AnyObject) {
+        
+        UIView.animateWithDuration(0.3){
+            self.cardScrollView.removeCardAtIndex(self.cardScrollView.selectedIndex)
+        }
+
+    }
 
 }
 

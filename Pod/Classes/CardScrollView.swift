@@ -58,6 +58,21 @@ import UIKit
         return CGPoint(x: xOffset, y: 0.0)
     }
     
+    public func addCardAtIndex(index: Int) -> UIView{
+        let newView = UIView()
+        _cards.insert(newView, atIndex: index)
+        scrollView.addSubview(newView)
+        layoutSubviews()
+        return newView
+    }
+    
+    public func removeCardAtIndex(index: Int){
+        _cards[index].removeFromSuperview()
+        _cards.removeAtIndex(index)
+        selectedIndex = max(0,min(cards.count-1,selectedIndex)) //truncated
+        layoutSubviews()
+    }
+    
     private func updateSelection(selection: Bool){
         
         if selection{
@@ -131,6 +146,7 @@ import UIKit
     
     func setupView(){
         scrollView.delegate = self
+        addSubview(scrollView)
         layoutSubviews()
     }
     
@@ -156,8 +172,6 @@ import UIKit
             _cards += [newView]
         }
         _cards.forEach(scrollView.addSubview)
-        addSubview(scrollView)
-        
         selectedIndex = 1
     }
 

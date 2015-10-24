@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -21,6 +22,18 @@
                                 <animations/>
                                 <items>
                                     <navigationItem title="CardScrollView" id="we6-SJ-2wf">
+                                        <leftBarButtonItems>
+                                            <barButtonItem title="Add" id="OR6-fi-Vrv">
+                                                <connections>
+                                                    <action selector="addItemButtonTapped:" destination="vXZ-lx-hvc" id="XOd-Ja-Zu4"/>
+                                                </connections>
+                                            </barButtonItem>
+                                            <barButtonItem title="Remove" id="vNX-bL-90N">
+                                                <connections>
+                                                    <action selector="removeButtonTapped:" destination="vXZ-lx-hvc" id="Iqf-dI-fFM"/>
+                                                </connections>
+                                            </barButtonItem>
+                                        </leftBarButtonItems>
                                         <barButtonItem key="rightBarButtonItem" title="toggle" id="5rs-DY-Qld">
                                             <connections>
                                                 <action selector="toggleSelectionMode:" destination="vXZ-lx-hvc" id="OzJ-zr-eNa"/>

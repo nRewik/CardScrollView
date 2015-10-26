@@ -37,6 +37,23 @@ import UIKit
         return CGSize(width: fullCardSize.width*downScale, height: fullCardSize.height*downScale)
     }
     
+    // card position
+    func cardCenterAtIndex(index: Int) -> CGPoint{
+        
+        let centerY = frame.size.height/2.0
+        let centerX: CGFloat
+        
+        if selectionMode{
+            let ralativeIndex = CGFloat(index-originIndex)
+            let eachItemWidth = spaceBetweenCard + shrinkedCardSize.width
+            centerX = cards[originIndex].center.x + (eachItemWidth * ralativeIndex)
+        }else{
+            centerX = (fullCardSize.width + spaceBetweenCard) * CGFloat(index) - fullCardSize.width/2.0
+        }
+        return CGPoint(x: centerX, y: centerY)
+    }
+    
+    // scroll view offset
     var fragmentWidth: CGFloat{
         return fullCardSize.width - shrinkedCardSize.width - 2*spaceBetweenCard
     }
@@ -59,10 +76,32 @@ import UIKit
     }
     
     public func addCardAtIndex(index: Int) -> UIView{
+        return addCardAtIndex(index, animated: false)
+    }
+    
+    public func addCardAtIndex(index: Int, animated: Bool) -> UIView{
         let newView = UIView()
         _cards.insert(newView, atIndex: index)
+
         scrollView.addSubview(newView)
-        layoutSubviews()
+        scrollView.sendSubviewToBack(newView)
+
+        if animated{
+            
+            adjustScrollViewContentSize()
+            adjustCardSize()
+            adjustCardTransform()
+            
+            newView.transform = CGAffineTransformMakeScale(0.001, 0.001)
+            newView.center = cardCenterAtIndex(index)
+            UIView.animateWithDuration(0.35){
+                self.adjustCardPosition()
+                newView.transform = self.selectionMode ? CGAffineTransformMakeScale(self.downScale, self.downScale) : CGAffineTransformIdentity
+            }
+            
+        }else{
+            layoutSubviews()
+        }
         return newView
     }
     
@@ -84,7 +123,8 @@ import UIKit
             let _originIndex = (scrollView.contentOffset.x + fullCardSize.width/2.0) / fullCardSize.width
             originIndex = max(0,min(cards.count-1,Int(_originIndex))) // truncated
             
-            adjustCardInSelectionMode()
+            adjustCardPosition()
+            adjustCardTransform()
         }else{
             
             // force scroll view to stop scrolling
@@ -92,55 +132,58 @@ import UIKit
             
             scrollView.pagingEnabled = true
             scrollView.scrollEnabled = false
-            
+
+            adjustCardPosition()
+            adjustCardTransform()
 
             let xOffset = (self.fullCardSize.width + self.spaceBetweenCard) * CGFloat(self.selectedIndex)
-            
-            adjustCard()
             scrollView.contentOffset.x = xOffset
         }
+
         
     }
     
     // MARK: - Layout
     override public func layoutSubviews() {
         super.layoutSubviews()
-        
         scrollView.frame.size = frame.size
-        
+        adjustScrollViewContentSize()
+        adjustCardSize()
+        adjustCardPosition()
+        adjustCardTransform()
+        adjustScrollViewOffset()
+    }
+    
+    func adjustScrollViewContentSize(){
         let contentWidth = fullCardSize.height * CGFloat(cards.count)
         let contentHeight = frame.height
         scrollView.contentSize = CGSize(width: contentWidth, height: contentHeight)
-        
-        for card in cards{
-            card.transform = CGAffineTransformIdentity
-            card.frame.size = fullCardSize
-        }
-        
+    }
+    
+    func adjustScrollViewOffset(){
         if selectionMode{
-            adjustCardInSelectionMode()
             scrollView.contentOffset = scrollOffsetInSelectionMode(index: selectedIndex)
         }else{
-            adjustCard()
             scrollView.contentOffset.x = (fullCardSize.width + spaceBetweenCard) * CGFloat(selectedIndex)
         }
     }
     
-    func adjustCard(){
-        for ( index, card ) in cards.enumerate(){
+    func adjustCardSize(){
+        for card in cards{
             card.transform = CGAffineTransformIdentity
-            card.frame.origin.x = (fullCardSize.width + spaceBetweenCard) * CGFloat(index)
-            card.center.y = frame.size.height/2.0
+            card.frame.size = fullCardSize
         }
     }
     
-    func adjustCardInSelectionMode(){
-        for ( index, card ) in cards.enumerate(){
-            card.transform = CGAffineTransformMakeScale(downScale, downScale)
-            let ralativeIndex = CGFloat(index-originIndex)
-            let eachItemWidth = spaceBetweenCard + shrinkedCardSize.width
-            card.center.x = cards[originIndex].center.x + (eachItemWidth * ralativeIndex)
-            card.center.y = frame.size.height/2.0
+    func adjustCardPosition(){
+        for (index,card) in cards.enumerate(){
+            card.center = cardCenterAtIndex(index)
+        }
+    }
+
+    func adjustCardTransform(){
+        for card in cards{
+            card.transform = selectionMode ? CGAffineTransformMakeScale(downScale, downScale) : CGAffineTransformIdentity
         }
     }
     

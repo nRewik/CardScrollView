@@ -18,7 +18,7 @@ extension CardScrollView: UIScrollViewDelegate{
         
         if abs(velocity.x-0) < 0.001{
             
-            let _currentCardIndex = floor( (targetContentOffset.memory.x - perCardOffset/2.0 - xOffsetOriginReference) /  perCardOffset)
+            let _currentCardIndex = floor( (targetContentOffset.memory.x - perCardOffset/2.0 - centerXReference) /  perCardOffset)
             selectedIndex = originIndex + Int(_currentCardIndex) + 1
         }else{
             selectedIndex += velocity.x > 0 ? 1 : -1

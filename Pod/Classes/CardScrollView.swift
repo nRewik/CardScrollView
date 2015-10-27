@@ -26,8 +26,7 @@ import UIKit
     
     let scrollView = UIScrollView()
     var _cards: [UIView] = []
-    
-    var originIndex: Int = 0
+    var originIndex = 0
     
     var fullCardSize: CGSize{
         return frame.size
@@ -46,14 +45,16 @@ import UIKit
         if selectionMode{
             let ralativeIndex = CGFloat(index-originIndex)
             let eachItemWidth = spaceBetweenCard + shrinkedCardSize.width
-            centerX = cards[originIndex].center.x + (eachItemWidth * ralativeIndex)
+            centerX = centerXReference - (fullCardSize.width/2.0) + (eachItemWidth * ralativeIndex)
         }else{
-            centerX = (fullCardSize.width + spaceBetweenCard) * CGFloat(index) - fullCardSize.width/2.0
+            centerX = (fullCardSize.width + spaceBetweenCard) * CGFloat(index) + fullCardSize.width/2.0
         }
         return CGPoint(x: centerX, y: centerY)
     }
     
     // scroll view offset
+    var centerXReference: CGFloat = 0.0
+
     var fragmentWidth: CGFloat{
         return fullCardSize.width - shrinkedCardSize.width - 2*spaceBetweenCard
     }
@@ -61,17 +62,12 @@ import UIKit
     var perCardOffset: CGFloat{
         return shrinkedCardSize.width + fragmentWidth/2.0 + spaceBetweenCard
     }
-    var xOffsetOriginReference: CGFloat{
-        return cards[originIndex].frame.origin.x - spaceBetweenCard - fragmentWidth/2.0
-    }
     
     func scrollOffsetInSelectionMode(index index: Int) -> CGPoint{
         
-        guard index >= 0 && index < cards.count else { return CGPointZero }
-        
-        let relativeCardIndex = CGFloat(index-originIndex)
+        let relativeCardIndex = CGFloat( max(0,index) - originIndex)
         let aggregatedFragment = fragmentWidth/2.0 * relativeCardIndex
-        let xOffset = xOffsetOriginReference + relativeCardIndex * perCardOffset - aggregatedFragment
+        let xOffset = centerXReference - fullCardSize.width + relativeCardIndex * perCardOffset - aggregatedFragment
         return CGPoint(x: xOffset, y: 0.0)
     }
     
@@ -80,6 +76,7 @@ import UIKit
     }
     
     public func addCardAtIndex(index: Int, animated: Bool) -> UIView{
+        
         let newView = UIView()
         _cards.insert(newView, atIndex: index)
 
@@ -106,10 +103,33 @@ import UIKit
     }
     
     public func removeCardAtIndex(index: Int){
-        _cards[index].removeFromSuperview()
-        _cards.removeAtIndex(index)
-        selectedIndex = max(0,min(cards.count-1,selectedIndex)) //truncated
-        layoutSubviews()
+        removeCardAtIndex(index, animated: false)
+    }
+    
+    public func removeCardAtIndex(index: Int, animated: Bool){
+        
+        if animated{
+            
+            let targetCard = cards[index]
+            _cards.removeAtIndex(index)
+            
+            selectedIndex = max(0,min(cards.count-1,selectedIndex)) //truncated
+            UIView.animateWithDuration(0.3,
+            animations: {
+                targetCard.transform = CGAffineTransformMakeScale(0.001, 0.001)
+                self.adjustScrollViewOffset()
+                self.adjustCardPosition()
+            },
+            completion: { finish in
+                self.layoutSubviews()
+                targetCard.removeFromSuperview()
+            })
+        }else{
+            _cards[index].removeFromSuperview()
+            _cards.removeAtIndex(index)
+            selectedIndex = max(0,min(cards.count-1,selectedIndex)) //truncated
+            layoutSubviews()
+        }
     }
     
     private func updateSelection(selection: Bool){
@@ -121,7 +141,8 @@ import UIKit
             
             // set origin index
             let _originIndex = (scrollView.contentOffset.x + fullCardSize.width/2.0) / fullCardSize.width
-            originIndex = max(0,min(cards.count-1,Int(_originIndex))) // truncated
+            originIndex = Int(_originIndex)
+            centerXReference = (fullCardSize.width * _originIndex) + (fullCardSize.width/2.0)
             
             adjustCardPosition()
             adjustCardTransform()

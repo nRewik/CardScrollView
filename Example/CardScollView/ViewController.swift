@@ -27,16 +27,13 @@ class ViewController: UIViewController {
     
     var count = 0
     @IBAction func addItemButtonTapped(sender: AnyObject) {
-        
         let colors = [UIColor.redColor(),UIColor.brownColor(),UIColor.yellowColor()]
         let newCard = cardScrollView.addCardAtIndex(cardScrollView.selectedIndex, animated: true)
         newCard.backgroundColor = colors[ (self.count++) % colors.count ]
     }
     
     @IBAction func removeButtonTapped(sender: AnyObject) {
-        
-        self.cardScrollView.removeCardAtIndex(self.cardScrollView.selectedIndex)
-
+        self.cardScrollView.removeCardAtIndex(self.cardScrollView.selectedIndex, animated: true)
     }
 
 }

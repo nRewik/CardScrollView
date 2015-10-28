@@ -225,6 +225,14 @@ import UIKit
         setupView()
     }
     
+    init(numberOfCards: Int){
+        super.init(frame: CGRect())
+        for _ in 0..<numberOfCards{
+            _cards += [UIView()]
+        }
+        setupView()
+    }
+    
     // MARK: - prepareForInterfaceBuilder
     public override func prepareForInterfaceBuilder() {
         selectedIndex = 1
